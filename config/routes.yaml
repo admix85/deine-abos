@@ -4,4 +4,10 @@ index:
 
 listSubscriptions:
     path: /subscriptions
+    methods: GET
     controller: App\Controller\SubscriptionController::list
+
+addSubscriptions:
+    path: /subscription
+    methods: POST
+    controller: App\Controller\SubscriptionController::add
