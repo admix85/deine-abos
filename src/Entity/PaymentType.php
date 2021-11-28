@@ -6,9 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\SubscriptionRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\PaymentTypeRepository")
  */
-class Subscription implements \JsonSerializable
+class PaymentType implements \JsonSerializable
 {
     /**
      * @ORM\Id
@@ -24,15 +24,16 @@ class Subscription implements \JsonSerializable
     protected string $name;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank()
      */
-    protected \DateTime $startDate;
+    protected string $description;
 
     public function jsonSerialize()
     {
         return [
             'name' => $this->name,
-            'startDate' => $this->startDate
+            'description' => $this->description ?? '',
         ];    }
 
 
@@ -48,18 +49,14 @@ class Subscription implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getStartDate(): \DateTime
+    public function getDescription(): ?string
     {
-        return $this->startDate;
+        return $this->description;
     }
 
-
-    public function setStartDate(\DateTime $startDate): self
+    public function setDescription(string $description): self
     {
-        $this->startDate = $startDate;
+        $this->description = $description;
         return $this;
     }
 
