@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\PaymentType;
 use App\Entity\Subscription;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,6 +50,47 @@ class SubscriptionController extends AbstractController
 
 
 
+    }
+
+    public function update(int $id, Request $request, ValidatorInterface $validator): Response {
+
+        $subscription = $this->getDoctrine()->getRepository(Subscription::class)->find($id);
+
+
+
+        if(!$subscription) {
+            return $this->json([], 404);
+        }
+
+        $this->setDataToPaymentType($request->request->all(), $subscription);
+
+        $requestData = $request->request->all();
+        $this->setDataToPaymentType($requestData, $subscription);
+
+
+
+        $error = $validator->validate($subscription);
+
+        if (count($error) > 0) {
+            return $this->json(['success' => false], 400);
+        }
+
+
+        $em = $this->getDoctrine()->getManager();
+        $em->flush();
+
+
+        return $this->json(['success' => true, 'data' => $subscription], 201);
+    }
+
+    protected function setDataToPaymentType(array $requestData, $paymentType)
+    {
+        foreach ($requestData as $key => $data) {
+            $methodName = 'set' . ucfirst($key)
+            if (!empty($data) && method_exists($paymentType,$methodName )) {
+                $paymentType->{$methodName}($data);
+            }
+        }
     }
 
 
